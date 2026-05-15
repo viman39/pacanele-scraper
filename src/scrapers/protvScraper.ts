@@ -1,21 +1,21 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
-const { BASE_URL_PROTV, INITIAL_DATE } = require("../constants");
+import axios from "axios";
+import cheerio from "cheerio";
+import { BASE_URL_PROTV, INITIAL_DATE } from "../constants";
 
 const PROTV_PACANELE = "/stiri-despre/pacanele";
 const PROTV_JOCURI_DE_NOROC = "/stiri-despre/jocuri-de-noroc/";
 
-const fetchProtvPage = async (path) => {
+const fetchProtvPage = async (path: string) => {
   const url = `${BASE_URL_PROTV}${path}`;
   const { data } = await axios.get(url);
   return data;
 };
 
-const getProtvArticles = async () => {
+export const getProtvArticles = async () => {
   console.log("Run ProTv scraper ...");
 
   const protvPaths = [PROTV_PACANELE, PROTV_JOCURI_DE_NOROC];
-  const articles = [];
+  const articles: any[] = [];
 
   const pages = await Promise.all(
     protvPaths.map((path) => fetchProtvPage(path)),
@@ -26,7 +26,8 @@ const getProtvArticles = async () => {
 
     $("article.article").each((_, elem) => {
       const title = $(elem).find("h2.article-title").text()?.trim();
-      const date = $(elem).find(".article-date").attr("data-utc-date")?.trim();
+      const date =
+        $(elem).find(".article-date").attr("data-utc-date")?.trim() || "";
 
       !articles.find((el) => el.title === title) &&
         new Date(date) >= INITIAL_DATE &&
@@ -40,5 +41,3 @@ const getProtvArticles = async () => {
 
   return articles;
 };
-
-module.exports = { getProtvArticles };

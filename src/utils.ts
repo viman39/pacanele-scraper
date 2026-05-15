@@ -1,4 +1,4 @@
-const parseDigiDate = (dateStr) => {
+export const parseDigiDate = (dateStr: string) => {
   if (!dateStr) return null;
 
   const parts = dateStr.split(".");
@@ -10,5 +10,3 @@ const parseDigiDate = (dateStr) => {
 
   return new Date(year, month - 1, day);
 };
-
-module.exports = { parseDigiDate };

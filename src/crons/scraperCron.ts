@@ -1,7 +1,7 @@
-const cron = require("node-cron");
-const { runAllScrapers } = require("../scrapers/scraper");
+import cron from "node-cron";
+import { runAllScrapers } from "../scrapers/scraper";
 
-const startScraperJob = () => {
+export const startScraperJob = () => {
   console.log("Starting scraper cron job...");
 
   runAllScrapers();
@@ -16,5 +16,3 @@ const startScraperJob = () => {
     }
   });
 };
-
-module.exports = { startScraperJob };

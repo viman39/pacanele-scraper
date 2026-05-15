@@ -1,9 +1,9 @@
-const { getProtvArticles } = require("./protvScraper");
-const { getDigiArticles } = require("./digiScraper");
+import { getDigiArticles } from "./digiScraper";
+import { getProtvArticles } from "./protvScraper";
 
 const fs = require("fs");
 
-async function runAllScrapers() {
+export async function runAllScrapers() {
   const digi = await getDigiArticles();
   const protv = await getProtvArticles();
 
@@ -27,5 +27,3 @@ async function runAllScrapers() {
 
   console.log(`scraper finished ${new Date()} ...`);
 }
-
-module.exports = { runAllScrapers };
