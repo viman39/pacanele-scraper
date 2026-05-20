@@ -1,3 +1,4 @@
+import { insertArticles } from "../db/queries/articles";
 import { getDigiArticles } from "./digiScraper";
 import { getProtvArticles } from "./protvScraper";
 
@@ -10,20 +11,18 @@ export async function runAllScrapers() {
   const allArticles = [
     ...digi.map((a) => ({
       ...a,
-      source: "DIGI24.ro",
-      sourceLink: "https://www.digi24.ro/",
+      trustName: "DIGI24.ro",
+      trustLink: "https://www.digi24.ro/",
     })),
     ...protv.map((a) => ({
       ...a,
-      source: "stiriliprotv.ro",
-      sourceLink: "https://stirileprotv.ro/",
+      trustName: "stiriliprotv.ro",
+      trustLink: "https://stirileprotv.ro/",
     })),
   ];
 
-  fs.writeFileSync(
-    "./data/articles.json",
-    JSON.stringify(allArticles, null, 2),
-  );
+  await insertArticles(allArticles);
+  // console.log(allArticles.map((t) => t.publishedAt));
 
   console.log(`scraper finished ${new Date()} ...`);
 }

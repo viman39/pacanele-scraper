@@ -1,5 +1,5 @@
 import axios from "axios";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import { BASE_URL_DIGI, INITIAL_DATE } from "../constants";
 import { parseDigiDate } from "../utils";
 
@@ -15,7 +15,7 @@ const fetchDigiTagPage = async () => {
 export const getDigiArticles = async () => {
   console.log("Run Digi scraper ...");
   const html = await fetchDigiTagPage();
-  const $ = cheerio.load(html);
+  const $ = load(html);
 
   const articles = $("article.article")
     .map((_, elem) => {
@@ -27,16 +27,16 @@ export const getDigiArticles = async () => {
         link: relLink?.includes("http")
           ? relLink
           : `${BASE_URL_DIGI}${relLink}`,
-        date: date,
+        publishedAt: parseDigiDate(date),
       };
     })
     .get();
 
   return articles
     ? articles.filter((article) => {
-        const date = parseDigiDate(article?.date);
-
-        return date == undefined ? 0 : date >= INITIAL_DATE;
+        return article.publishedAt == undefined
+          ? 0
+          : article.publishedAt >= INITIAL_DATE;
       })
     : [];
 };

@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const articles = pgTable("articles", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -8,4 +8,6 @@ export const articles = pgTable("articles", {
   link: text("link").notNull().unique(),
   publishedAt: timestamp("published_at"),
   cityMentions: text("cityMentions").array(),
+  display: boolean("display").notNull().default(true),
+  deleted: boolean("deleted").notNull().default(false),
 });

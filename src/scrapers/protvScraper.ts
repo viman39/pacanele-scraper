@@ -1,5 +1,5 @@
 import axios from "axios";
-import cheerio from "cheerio";
+import { load } from "cheerio";
 import { BASE_URL_PROTV, INITIAL_DATE } from "../constants";
 
 const PROTV_PACANELE = "/stiri-despre/pacanele";
@@ -22,19 +22,19 @@ export const getProtvArticles = async () => {
   );
 
   pages.forEach((page) => {
-    const $ = cheerio.load(page);
+    const $ = load(page);
 
     $("article.article").each((_, elem) => {
       const title = $(elem).find("h2.article-title").text()?.trim();
-      const date =
+      const publishedAt =
         $(elem).find(".article-date").attr("data-utc-date")?.trim() || "";
 
       !articles.find((el) => el.title === title) &&
-        new Date(date) >= INITIAL_DATE &&
+        new Date(publishedAt) >= INITIAL_DATE &&
         articles.push({
           title,
           link: $(elem).find("a").attr("href"),
-          date,
+          publishedAt: new Date(publishedAt),
         });
     });
   });

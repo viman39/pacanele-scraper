@@ -1,6 +1,10 @@
 import express from "express";
 import cors from "cors";
-import fs from "fs";
+import {
+  getArticlesByCity,
+  getLatestArticles,
+  updateArticle,
+} from "../db/queries/articles";
 require("dotenv").config();
 
 const { startScraperJob } = require("../crons/scraperCron");
@@ -9,11 +13,31 @@ const app = express();
 
 app.use(cors());
 
-app.get("/articles", (req, res) => {
-  const raw = fs.readFileSync("./data/articles.json").toString();
-  const articles = JSON.parse(raw);
+app.patch("/articles/:id/update", async (req, res) => {
+  const { id } = req.params;
 
-  res.json(articles);
+  const updated = await updateArticle(id, {
+    deleted: true,
+  });
+
+  res.json(updated);
+});
+
+app.get("/articles", async (req, res) => {
+  const city = req.query.city as string;
+  const limit = req?.query?.limit
+    ? parseInt(req.query.limit as string)
+    : undefined;
+
+  if (city) {
+    const data = await getArticlesByCity(city);
+
+    return res.json(data.rows);
+  }
+
+  const data = await getLatestArticles(limit);
+
+  res.json(data);
 });
 
 app.listen(3000, () => {
